@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, UserPlus } from "lucide-react";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
   });
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -23,13 +25,14 @@ export default function LoginPage() {
     }));
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+    setSuccess(false);
 
     try {
-      const res = await fetch("/api/login", {
+      const res = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,14 +43,20 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setMessage(data.message || "Login failed");
+        setMessage(data.message || "Registration failed");
         return;
       }
 
-      router.push("/dashboard");
+      setSuccess(true);
+      setMessage("Registration successful. Redirecting to login...");
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 1200);
     } catch (error) {
       console.error(error);
       setMessage("Something went wrong");
+      setSuccess(false);
     } finally {
       setLoading(false);
     }
@@ -59,16 +68,30 @@ export default function LoginPage() {
         <div className="rounded-2xl border border-white/10 bg-white/10 backdrop-blur-xl shadow-2xl p-8">
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white/10 border border-white/10">
-              <LogIn className="h-6 w-6 text-white" />
+              <UserPlus className="h-6 w-6 text-white" />
             </div>
 
-            <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
+            <h1 className="text-3xl font-bold text-white">Create Account</h1>
             <p className="mt-2 text-sm text-slate-300">
-              Sign in to access your dashboard
+              Register to get started with your account
             </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleRegister} className="space-y-5">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Full Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-slate-400 outline-none transition focus:border-blue-400 focus:bg-white/10"
+              />
+            </div>
+
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-200">
                 Email Address
@@ -113,7 +136,13 @@ export default function LoginPage() {
             </div>
 
             {message && (
-              <div className="rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              <div
+                className={`rounded-xl px-4 py-3 text-sm ${
+                  success
+                    ? "border border-green-400/20 bg-green-500/10 text-green-300"
+                    : "border border-red-400/20 bg-red-500/10 text-red-300"
+                }`}
+              >
                 {message}
               </div>
             )}
@@ -123,18 +152,18 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full rounded-xl bg-white text-slate-900 py-3 font-semibold transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {loading ? "Signing in..." : "Login"}
+              {loading ? "Creating account..." : "Register"}
             </button>
           </form>
 
           <div className="mt-6 text-center text-sm text-slate-300">
-            Don&apos;t have an account?{" "}
+            Already have an account?{" "}
             <button
               type="button"
-              onClick={() => router.push("/register")}
+              onClick={() => router.push("/login")}
               className="font-semibold text-white hover:underline"
             >
-              Register
+              Login
             </button>
           </div>
         </div>
