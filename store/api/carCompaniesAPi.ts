@@ -57,7 +57,7 @@ export interface UpdateCarCompanyPayload {
 
 export const carCompanyApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getCarCompanies: builder.query<CarCompanyListResponse, GetCarCompaniesParams | void>({
+    getCarCompanies: builder.query({
       query: (params) => ({
         url: "/car-companies",
         method: "GET",
