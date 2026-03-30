@@ -38,7 +38,6 @@ export async function createDepartmentController(req: Request) {
       name,
       slug,
       description,
-      image,
       isActive,
     });
 

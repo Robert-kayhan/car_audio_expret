@@ -34,11 +34,6 @@ const DepartmentSchema = new Schema<IDepartment>(
       trim: true,
       maxlength: [500, "Description cannot exceed 500 characters"],
     },
-    image: {
-      type: String,
-      default: "",
-      trim: true,
-    },
     isActive: {
       type: Boolean,
       default: true,

@@ -1,54 +1,39 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
-
-export type UserRole = "admin" | "user";
+import mongoose, { Schema, Document, models, model } from "mongoose";
 
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: UserRole;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  role: "admin" | "user";
 }
 
 const UserSchema = new Schema<IUser>(
   {
     name: {
       type: String,
-      required: [true, "Name is required"],
+      required: true,
       trim: true,
-      maxlength: [100, "Name cannot exceed 100 characters"],
     },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: true,
       unique: true,
       lowercase: true,
       trim: true,
-      index: true,
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: true,
     },
     role: {
       type: String,
       enum: ["admin", "user"],
       default: "user",
-      index: true,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const User: Model<IUser> =
-  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+const User = models.User || model<IUser>("User", UserSchema);
 
 export default User;
