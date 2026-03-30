@@ -44,7 +44,7 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/admin/car-model");
     } catch (error) {
       console.error(error);
       setMessage("Something went wrong");
